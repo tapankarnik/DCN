@@ -14,7 +14,9 @@ Now your virtual environment is ready
 
 Set an environment variable called DEFAULT_CONFIG to config.cfg
 
-    export DEFAULT_CONFIG=config.cfg
+    export DEFAULT_CONFIG=$PATH/config.cfg (for Linux)
+
+For Windows systems, use the set command instead.
 
 run the following to launch the server
 
