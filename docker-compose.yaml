@@ -1,0 +1,15 @@
+version: '3'
+services:
+    server1:
+        image: server
+        environment:
+            - DEFAULT_CONFIG=/app/config.cfg
+        ports:
+            - "5000:5000"
+
+    server2:
+        image: server
+        environment:
+            - DEFAULT_CONFIG=/app/config.cfg
+        ports:
+            - "5001:5000"
