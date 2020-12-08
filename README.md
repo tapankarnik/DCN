@@ -1,33 +1,20 @@
 # Data Center Network
 
-## Python
-Install pipenv to install the required packages, flask and pytest
-
-    pip3 install pipenv
-
-Once pipenv is working run the following
-
-    pipenv shell
-    pipenv install
-
-Now your virtual environment is ready
-
-Set an environment variable called DEFAULT_CONFIG to config.cfg
-
-    export DEFAULT_CONFIG=$PATH/config.cfg (for Linux)
-
-For Windows systems, use the set command instead.
-
-run the following to launch the server
-
-    python app.py
-
 ## Docker
-Build the docker file if you want to run the server in a docker container
+Build the Docker file for the load balancer and the worker. 
 
-    docker build -t server .
+    docker build -t load_balancer .
+    docker build -t worker worker/.
 
-To run the server in a docker container run the following
+Use docker compose to set up the network
 
-    docker run -e DEFAULT_CONFIG='/app/config.cfg' -p 5000:5000 --rm server
+    docker-compose up
 
+Run the following to take down the network
+
+    docker-compose down
+
+## Testing
+
+Send a POST request to localhost:5000/DCN, where the load balancer is accepting requests.
+Send a JSON message with 4 parameters, job_name, job_id, num_jobs and job_duration.

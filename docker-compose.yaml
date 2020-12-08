@@ -1,15 +1,44 @@
 version: '3'
 services:
-    server1:
-        image: server
-        environment:
-            - DEFAULT_CONFIG=/app/config.cfg
+    loadbalancer:
         ports:
             - "5000:5000"
+        image: load_balancer
 
-    server2:
-        image: server
+    worker1:
+        hostname: worker1
+        image: worker
+        restart: always
+        depends_on:
+            - rabbitmq
+            - rabbitmq2
         environment:
-            - DEFAULT_CONFIG=/app/config.cfg
-        ports:
-            - "5001:5000"
+            HOSTNAME: rabbitmq
+        expose:
+            - 5672
+            
+    worker2:
+        hostname: worker2
+        image: worker
+        restart: always
+        depends_on:
+            - rabbitmq
+            - rabbitmq2
+        environment:
+            HOSTNAME: rabbitmq2
+        expose:
+            - 5672
+
+    rabbitmq:
+        hostname: rabbitmq
+        image: rabbitmq:3-management
+        expose:
+            - 5672
+
+    rabbitmq2:
+        hostname: rabbitmq2
+        image: rabbitmq:3-management
+        expose:
+            - 5672
+
+
