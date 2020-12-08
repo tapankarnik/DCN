@@ -10,7 +10,7 @@ def load_configuration(path):
         config = yaml.load(config_file, Loader=yaml.FullLoader)
     return config
 
-config = load_configuration('/app/worker_config.yaml')
+config = load_configuration('./worker_config.yaml')
 print(config)
 
 #EXCHANGE_LIST = [5672, 5673]
@@ -22,32 +22,47 @@ def router():
 
 @load_balancer.route('/DCN', methods=['POST'])
 def loadbalancer():
-    job = request.json
-    global i
+    if request.is_json:
+        job = request.json
 
-    EXCHANGE_PORTS = config['EXCHANGE_PORTS']
-    CONTAINER_NAME = ['rabbitmq', 'rabbitmq2']
-    print(CONTAINER_NAME[i])
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host=CONTAINER_NAME[i]) # Round-Robin Algorithm
-        )
-    i = (i+1)%len(EXCHANGE_PORTS)
+        try:
+            if len(job['job_name'])>20 or len(job['job_name'])==0 or job['job_name'] == None:
+                raise Exception('Invalid Job Name')
+            if job['num_jobs']<0 or job['num_jobs']==0 or job['num_jobs']>100:
+                raise Exception('Invalid Number of Jobs')
+            if job['job_id']<0 or job['job_id']>=job['num_jobs']:
+                raise Exception('Invalid Job ID')
+            if job['job_duration']<=0 or job['job_duration']>30:
+                raise Exception('Invalid Job Duration')
 
-    channel = connection.channel()
+        except Exception:
+            return "Invalid Input", 400
 
-    channel.queue_declare(queue='queue')
+        global i
 
-    channel.basic_publish(
-            exchange='',
-            routing_key='queue',
-            body=json.dumps(job)
+        CONTAINER_NAME = ['rabbitmq', 'rabbitmq2']
+        connection = pika.BlockingConnection(
+            pika.ConnectionParameters(host=CONTAINER_NAME[i]) # Round-Robin Algorithm
             )
+        i = (i+1)%len(CONTAINER_NAME)
 
-    print(" [x] Sent Job ID ", job['job_id'], " under Job name ", job['job_name'])
-    #print(" [x] Sent dummy message")
+        channel = connection.channel()
 
-    connection.close()
-    return b'OK'
+        channel.queue_declare(queue='queue')
+
+        channel.basic_publish(
+                exchange='',
+                routing_key='queue',
+                body=json.dumps(job)
+                )
+
+        print(" [x] Sent Job ID ", job['job_id'], " under Job name ", job['job_name'])
+
+        connection.close()
+        return b'OK\n'
+    else:
+        return b'Input not JSON', 400
+
 
 
 if __name__=="__main__":

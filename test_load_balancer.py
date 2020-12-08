@@ -14,7 +14,30 @@ def test_hello(client):
         num_jobs = 12,
         job_duration = 2,
         )
-    result = client.post('/first_hello', data=payload)
+    result = client.post('/first_hello', data=payload, content_type='application/json')
     assert b"OK" in result.data
+
+def test_loadbalancer1(client):
+    payload = dict(
+        job_name = "Tapan",
+        job_id = 2,
+        num_jobs = 12,
+        job_duration = 2,
+        )
+
+    result = client.post('/DCN', data=payload, content_type='application/json')
+    assert b"OK" in result.data
+
+def test_loadbalancer2(client):
+    payload = dict(
+        job_name = "",
+        job_id = -1,
+        num_jobs = 0,
+        job_duration = 0,
+        )
+
+    result = client.post('/DCN', data=payload, content_type='application/json')
+    assert b"Invalid Input" in result.data
+
 
 
