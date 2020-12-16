@@ -19,10 +19,10 @@ services:
         image: worker
         restart: always
         depends_on:
-            - rabbitmq
+            - rabbitmq1
             - rabbitmq2
         environment:
-            HOSTNAME: rabbitmq
+            HOSTNAME: rabbitmq1
             PYTHONUNBUFFERED: 1
         expose:
             - 5672
@@ -32,7 +32,7 @@ services:
         image: worker
         restart: always
         depends_on:
-            - rabbitmq
+            - rabbitmq1
             - rabbitmq2
         environment:
             HOSTNAME: rabbitmq2
@@ -45,10 +45,10 @@ services:
         image: worker
         restart: always
         depends_on:
-            - rabbitmq
+            - rabbitmq1
             - rabbitmq2
         environment:
-            HOSTNAME: rabbitmq
+            HOSTNAME: rabbitmq1
             PYTHONUNBUFFERED: 1
         expose:
             - 5672
@@ -58,7 +58,7 @@ services:
         image: worker
         restart: always
         depends_on:
-            - rabbitmq
+            - rabbitmq1
             - rabbitmq2
         environment:
             HOSTNAME: rabbitmq2
@@ -66,8 +66,8 @@ services:
         expose:
             - 5672
 
-    rabbitmq:
-        hostname: rabbitmq
+    rabbitmq1:
+        hostname: rabbitmq1
         image: rabbitmq:3-management
         expose:
             - 5672

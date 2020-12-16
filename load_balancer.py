@@ -4,14 +4,6 @@ import pika
 import docker
 
 load_balancer = Flask(__name__)
-#load_balancer.config.from_envvar('DEFAULT_CONFIG')
-
-def load_configuration(path):
-    with open(path) as config_file:
-        config = yaml.load(config_file, Loader=yaml.FullLoader)
-    return config
-
-#config = load_configuration(os.environ['WORKER_CONFIG'])
 
 i = 0
 
@@ -43,7 +35,6 @@ def loadbalancer():
         client = docker.from_env()
         containers = client.containers.list()
         CONTAINER_NAME = [container.name for container in containers if 'rabbitmq' in container.name]
-        #CONTAINER_NAME = ['dcn_rabbitmq_1', 'dcn_rabbitmq2_1']
         connection = pika.BlockingConnection(
             pika.ConnectionParameters(host=CONTAINER_NAME[i]) # Round-Robin Algorithm
             )
