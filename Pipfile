@@ -8,6 +8,7 @@ flask = "*"
 pytest = "*"
 pika = "*"
 pyyaml = "*"
+docker = "*"
 
 [dev-packages]
 

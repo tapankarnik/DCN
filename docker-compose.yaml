@@ -4,6 +4,15 @@ services:
         ports:
             - "5000:5000"
         image: load_balancer
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        expose:
+            - 5000
+
+    stresstesting:
+        ports:
+            - "5011:5011"
+        image: sts
 
     worker1:
         hostname: worker1
@@ -14,6 +23,7 @@ services:
             - rabbitmq2
         environment:
             HOSTNAME: rabbitmq
+            PYTHONUNBUFFERED: 1
         expose:
             - 5672
             
@@ -26,6 +36,33 @@ services:
             - rabbitmq2
         environment:
             HOSTNAME: rabbitmq2
+            PYTHONUNBUFFERED: 1
+        expose:
+            - 5672
+
+    worker3:
+        hostname: worker3
+        image: worker
+        restart: always
+        depends_on:
+            - rabbitmq
+            - rabbitmq2
+        environment:
+            HOSTNAME: rabbitmq
+            PYTHONUNBUFFERED: 1
+        expose:
+            - 5672
+
+    worker4:
+        hostname: worker3
+        image: worker
+        restart: always
+        depends_on:
+            - rabbitmq
+            - rabbitmq2
+        environment:
+            HOSTNAME: rabbitmq2
+            PYTHONUNBUFFERED: 1
         expose:
             - 5672
 

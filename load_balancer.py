@@ -1,19 +1,18 @@
 from flask import Flask, request
-import json, yaml
+import json, yaml, os
 import pika
+import docker
 
 load_balancer = Flask(__name__)
-load_balancer.config.from_envvar('DEFAULT_CONFIG')
+#load_balancer.config.from_envvar('DEFAULT_CONFIG')
 
 def load_configuration(path):
     with open(path) as config_file:
         config = yaml.load(config_file, Loader=yaml.FullLoader)
     return config
 
-config = load_configuration('./worker_config.yaml')
-print(config)
+#config = load_configuration(os.environ['WORKER_CONFIG'])
 
-#EXCHANGE_LIST = [5672, 5673]
 i = 0
 
 @load_balancer.route('/first_hello', methods=['POST'])
@@ -40,7 +39,11 @@ def loadbalancer():
 
         global i
 
-        CONTAINER_NAME = ['rabbitmq', 'rabbitmq2']
+        
+        client = docker.from_env()
+        containers = client.containers.list()
+        CONTAINER_NAME = [container.name for container in containers if 'rabbitmq' in container.name]
+        #CONTAINER_NAME = ['dcn_rabbitmq_1', 'dcn_rabbitmq2_1']
         connection = pika.BlockingConnection(
             pika.ConnectionParameters(host=CONTAINER_NAME[i]) # Round-Robin Algorithm
             )
@@ -62,8 +65,6 @@ def loadbalancer():
         return b'OK\n'
     else:
         return b'Input not JSON', 400
-
-
 
 if __name__=="__main__":
     load_balancer.run(host='0.0.0.0')

@@ -25,7 +25,7 @@ def test_loadbalancer1(client):
         job_duration = 2,
         )
 
-    result = client.post('/DCN', data=payload, content_type='application/json')
+    result = client.post('/DCN', json=payload)
     assert b"OK" in result.data
 
 def test_loadbalancer2(client):
@@ -36,7 +36,7 @@ def test_loadbalancer2(client):
         job_duration = 0,
         )
 
-    result = client.post('/DCN', data=payload, content_type='application/json')
+    result = client.post('/DCN', json=payload)
     assert b"Invalid Input" in result.data
 
 
