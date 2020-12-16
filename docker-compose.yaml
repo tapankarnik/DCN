@@ -14,6 +14,15 @@ services:
             - "5011:5011"
         image: sts
 
+    chaostesting:
+        ports:
+            - "5021:5021"
+        image: cts
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        expose:
+            - 5021
+
     worker1:
         hostname: worker1
         image: worker
