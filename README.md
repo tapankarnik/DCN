@@ -8,6 +8,8 @@ Part of the Chaos Testing Suite
 
 [Chaos Testing Subsystem](https://github.com/tapankarnik/Chaos-Testing)
 
+[Monitoring Testing Subsystem](https://github.com/tapankarnik/Monitoring_System)
+
 ## Docker
 Build the Docker file for the load balancer and the worker. 
 
@@ -17,6 +19,14 @@ Build the Docker file for the load balancer and the worker.
 Get the Stress Testing Subsystem from the following link, [Stress-Testing-Subsytem](https://github.com/tapankarnik/Stress-Testing) and execute the following in the folder.
 
     docker build -t sts .
+
+Get the Chaos Testing Subsystem and execute the following to build the docker image.
+
+    docker build -t cts .
+
+Get the Monitoring Subsystem and execute the following to build the docker image.
+
+    docker build -t mss .
 
 ## Setting up the network
 
