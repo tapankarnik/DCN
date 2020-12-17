@@ -1,8 +1,13 @@
 import pika, sys, os
+import requests
 import json
 import time
 import logging
 #logging.basicConfig(filename='error.log', level=logging.DEBUG)
+
+def work(job_duration):
+    time.sleep(job_duration)
+    return True
 
 def main():
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=os.environ['HOSTNAME']))
@@ -17,10 +22,13 @@ def main():
         #logging.debug(" [x] Received Job ID ", job['job_id'], " , under Job name ", job['job_name'])
         print(" Working...")
         #logging.debug("Working...")
-        time.sleep(job['job_duration'])
+        while work(job['job_duration']) is None:
+            a = 110000000000000*1000000000000000000
+
         print(" [x] Done")
         #logging.debug(" [x] Done")
         ch.basic_ack(delivery_tag = method.delivery_tag)
+        r = requests.post(url='http://mss:5031/job_done', json=job)
 
     channel.basic_consume(queue='queue', on_message_callback=callback)
 

@@ -23,6 +23,15 @@ services:
         expose:
             - 5021
 
+    mss:
+        ports:
+            - "5031:5031"
+        image: mss
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        expose:
+            - 5031
+
     worker1:
         hostname: worker1
         image: worker
